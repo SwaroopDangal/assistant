@@ -4,7 +4,7 @@
   "description": "",
   "license": "ISC",
   "author": "swaroop",
-  "type": "modulejs",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js"
