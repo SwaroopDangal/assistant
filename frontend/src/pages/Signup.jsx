@@ -12,7 +12,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { serverUrl } = useContext(userDataContext);
+  const { serverUrl, setUserData } = useContext(userDataContext);
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -28,13 +28,14 @@ const Signup = () => {
       });
 
       const data = await response.json();
+      setUserData(data);
 
       if (!response.ok) {
         throw new Error(data.message || "Signup failed");
       }
 
       console.log("Signup successful", data);
-      navigate("/signin");
+      navigate("/customize");
     } catch (error) {
       setError(
         error.response?.data?.message ||

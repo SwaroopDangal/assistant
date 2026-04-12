@@ -24,7 +24,7 @@ export const signUp = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             secure: false,
-            sameSite: true,
+            sameSite: "lax",
             maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
         })
         return res.status(201).json(user);
@@ -46,10 +46,11 @@ export const Login = async (req, res) => {
             return res.status(400).json({ message: "Invalid credentials" });
         }
         const token = genToken(user._id);
+        console.log(token)
         res.cookie("token", token, {
             httpOnly: true,
             secure: false,
-            sameSite: true,
+            sameSite: "lax",
             maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
         })
         return res.status(200).json(user);

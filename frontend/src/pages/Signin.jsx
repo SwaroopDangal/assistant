@@ -11,7 +11,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { serverUrl } = useContext(userDataContext);
+  const { serverUrl, setUserData } = useContext(userDataContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -20,6 +20,7 @@ const Signup = () => {
       setLoading(true);
       const response = await fetch(`${serverUrl}/api/auth/login`, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -33,7 +34,8 @@ const Signup = () => {
       }
 
       console.log("Login successful", data);
-      navigate("/dashboard");
+      setUserData(data);
+      navigate("/customize");
     } catch (error) {
       setError(
         error.response?.data?.message ||
