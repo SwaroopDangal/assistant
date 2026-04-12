@@ -4,7 +4,20 @@ import { userDataContext } from "./userContext";
 const UserContext = ({ children }) => {
   const serverUrl = "http://localhost:3000";
   const [userData, setUserData] = useState(null);
-  const value = { serverUrl };
+  const [frontendImage, setFrontendImage] = React.useState(null);
+  const [backendImage, setBackendImage] = React.useState(null);
+  const [selectedImage, setSelectedImage] = React.useState(null);
+  const value = {
+    serverUrl,
+    userData,
+    setUserData,
+    frontendImage,
+    setFrontendImage,
+    backendImage,
+    setBackendImage,
+    selectedImage,
+    setSelectedImage,
+  };
   useEffect(() => {
     const fetchUser = async () => {
       try {
