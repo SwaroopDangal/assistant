@@ -33,7 +33,7 @@ const UserContext = ({ children }) => {
         }
       } catch (error) {
         console.error("Error fetching current user:", error);
-      }
+      } 
     };
 
     fetchUser();
