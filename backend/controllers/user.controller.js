@@ -1,5 +1,8 @@
 import uploadCoudinary from "../config/cloudinary.js";
 import User from "../models/user.models.js";
+import geminiResponse from "../gemini.js";
+import moment from "moment";
+
 export const getCurrentUser = async (req, res) => {
     try {
         const { userId } = req
@@ -35,5 +38,48 @@ export const updateAssistant = async (req, res) => {
 
     } catch (error) {
         return res.status(500).json({ message: "Internal Server Error in update assistant" });
+    }
+}
+
+
+export const askToAssistant = async (req, res) => {
+    try {
+        const { command } = req.body;
+        const user = await User.findById(req.userId).select("-password");
+        const { userName, assistantName, assistantImage } = user;
+        const result = await geminiResponse(command, userName, assistantName);
+
+        const jsonMatch = result.match(/{[\s\S]*}/)
+        if (!jsonMatch) {
+            return res.status(200).json({ message: "No valid JSON response from assistant" });
+        }
+        let gemResult = JSON.parse(jsonMatch[0]);
+        const type = gemResult.type;
+        switch (type) {
+            case 'get-date':
+                return res.status(200).json({ type, userInput: gemResult.userInput, response: `Today is ${moment().format('YYYY-MM-DD')}` });
+            case 'get-time':
+                return res.status(200).json({ type, userInput: gemResult.userInput, response: `The time is ${moment().format('HH:mm:A')}` });
+            case 'get-day':
+                return res.status(200).json({ type, userInput: gemResult.userInput, response: `Today is ${moment().format('dddd')}` });
+            case get - month:
+                return res.status(200).json({ type, userInput: gemResult.userInput, response: `Today is ${moment().format('MMMM')}` });
+            case 'google_search':
+            case 'youtube_search':
+            case 'youtube_play':
+            case 'general':
+            case "calculator_open":
+            case "instagram_open":
+            case "facebook_open":
+            case "weather-show":
+                return res.status(200).json({ type, userInput: gemResult.userInput, response: gemResult.response });
+
+            default:
+                return res.status(200).json({ type, userInput: gemResult.userInput, response: "Assistant response received but type is unrecognized" });
+        }
+
+
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server Error in ask to assistant" });
     }
 }
