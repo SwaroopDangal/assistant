@@ -14,12 +14,12 @@ const geminiResponse = async (prompt, assistantName, userName) => {
                 "instagram_open" |
                 "facebook_open" |
                 "weather-show", 
-                "userinput":"<original user input>"{only remove your name from userinput if exists} and yadi kasaile google or youtube ma search garna bhano bhane userinput ma matra tyo text jaawosh,
+                "userInput":"<original user input>"{only remove your name from userinput if exists} and yadi kasaile google or youtube ma search garna bhano bhane userinput ma matra tyo text jaawosh,
                 "response":"<a short spoken response to read out loud to the user>"
     }
     Instructions:
 -"type": determine the intent of the user.
--"userinput": original sentence the user spoke.
+-"userInput": original sentence the user spoke.
 -"response": A short voice-friendly reply, e.g., "Sure, playing it now", "Here's what I found", "Today is Tuesday", etc.
 
 Type meanings:
