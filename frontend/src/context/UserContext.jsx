@@ -7,17 +7,7 @@ const UserContext = ({ children }) => {
   const [frontendImage, setFrontendImage] = React.useState(null);
   const [backendImage, setBackendImage] = React.useState(null);
   const [selectedImage, setSelectedImage] = React.useState(null);
-  const value = {
-    serverUrl,
-    userData,
-    setUserData,
-    frontendImage,
-    setFrontendImage,
-    backendImage,
-    setBackendImage,
-    selectedImage,
-    setSelectedImage,
-  };
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -33,11 +23,41 @@ const UserContext = ({ children }) => {
         }
       } catch (error) {
         console.error("Error fetching current user:", error);
-      } 
+      }
     };
 
     fetchUser();
   }, []);
+
+  const getGeminiResponse = async (command) => {
+    try {
+      const result = await fetch(`${serverUrl}/api/user/asktoassistant`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ command }),
+      });
+      const data = await result.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching Gemini response:", error);
+    }
+  };
+
+  const value = {
+    serverUrl,
+    userData,
+    setUserData,
+    frontendImage,
+    setFrontendImage,
+    backendImage,
+    setBackendImage,
+    selectedImage,
+    setSelectedImage,
+    getGeminiResponse,
+  };
 
   return (
     <userDataContext.Provider value={value}>
