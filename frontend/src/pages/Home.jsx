@@ -26,6 +26,13 @@ const Home = () => {
     }
   };
 
+  const speak = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(utterance);
+  };
+
+ 
+
   useEffect(() => {
     const speechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -46,6 +53,7 @@ const Home = () => {
       ) {
         const data = await getGeminiResponse(transcript);
         console.log("data", data);
+        
       }
     };
 
