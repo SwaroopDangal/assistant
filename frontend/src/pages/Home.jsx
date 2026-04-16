@@ -1,10 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { userDataContext } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const navigate = useNavigate();
-  const { userData, serverUrl, setUserData } = useContext(userDataContext);
+  const { userData, serverUrl, setUserData, getGeminiResponse } =
+    useContext(userDataContext);
 
   const handleLogout = () => {
     try {
@@ -24,6 +25,32 @@ const Home = () => {
       navigate("/signin");
     }
   };
+
+  useEffect(() => {
+    const speechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const recognition = new speechRecognition();
+    recognition.continuous = true;
+    recognition.lang = "en-US";
+
+    recognition.onresult = async (event) => {
+      const transcript =
+        event.results[event.results.length - 1][0].transcript.trim();
+      console.log("Transcript:", transcript);
+
+      if (
+        transcript
+          .toLowerCase()
+          .includes(userData?.user?.assistantName.toLowerCase())
+      ) {
+        const data = await getGeminiResponse(transcript);
+        console.log("data", data);
+      }
+    };
+
+    recognition.start();
+  }, []);
 
   return (
     <div className="w-full h-screen bg-linear-to-t from-black to-[#02023d] flex justify-center items-center flex-col gap-4 ">
