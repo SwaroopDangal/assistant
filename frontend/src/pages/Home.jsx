@@ -31,7 +31,38 @@ const Home = () => {
     window.speechSynthesis.speak(utterance);
   };
 
- 
+  const handleCommand = (data) => {
+    const { type, userInput, response } = data;
+    speak(response);
+    if (type === "google-search") {
+      const query = encodeURIComponent(userInput);
+      window.open(`https://www.google.com/search?q=${query}`, "_blank");
+    }
+    if (type === "calculator-open") {
+      const query = encodeURIComponent(userInput);
+      window.open(
+        `https://www.calculator.net/calculator/calc${query}`,
+        "_blank",
+      );
+    }
+    if (type === "instagram-open") {
+      window.open(`https://www.instagram.com/`, "_blank");
+    }
+    if (type === "facebook-open") {
+      window.open(`https://www.facebook.com/`, "_blank");
+    }
+    if (type === "weather-show") {
+      const query = encodeURIComponent(userInput);
+      window.open(`https://www.google.com/search?q=weather+${query}`, "_blank");
+    }
+    if (type === "youtube-search" || type === "youtube-play") {
+      const query = encodeURIComponent(userInput);
+      window.open(
+        `https://www.youtube.com/results?search_query=${query}`,
+        "_blank",
+      );
+    }
+  };
 
   useEffect(() => {
     const speechRecognition =
@@ -53,7 +84,7 @@ const Home = () => {
       ) {
         const data = await getGeminiResponse(transcript);
         console.log("data", data);
-        
+        handleCommand(data);
       }
     };
 
