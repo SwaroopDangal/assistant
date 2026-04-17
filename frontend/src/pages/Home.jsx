@@ -30,13 +30,22 @@ const Home = () => {
     }
   };
 
+  const startRecognition = () => {
+    try {
+      recognitionRef?.current?.start();
+      setListening(true);
+    } catch (error) {
+      console.error("Error starting recognition:", error);
+    }
+  };
+
   const speak = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
     synth.speak(utterance);
     isSpeakingRef.current = true;
     utterance.onend = () => {
       isSpeakingRef.current = false;
-      recognitionRef.current.start();
+      startRecognition();
     };
   };
 
