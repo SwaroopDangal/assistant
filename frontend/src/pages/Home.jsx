@@ -7,6 +7,10 @@ const Home = () => {
   const { userData, serverUrl, setUserData, getGeminiResponse } =
     useContext(userDataContext);
 
+  const [listening, setListening] = React.useState(false);
+  const isSpeakingRef = React.useRef(false);
+  const recognitionRef = React.useRef(null);
+  const synth = window.speechSynthesis;
   const handleLogout = () => {
     try {
       const result = fetch(`${serverUrl}/api/auth/logout`, {
@@ -28,7 +32,12 @@ const Home = () => {
 
   const speak = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
-    window.speechSynthesis.speak(utterance);
+    synth.speak(utterance);
+    isSpeakingRef.current = true;
+    utterance.onend = () => {
+      isSpeakingRef.current = false;
+      recognitionRef.current.start();
+    };
   };
 
   const handleCommand = (data) => {
@@ -72,6 +81,43 @@ const Home = () => {
     recognition.continuous = true;
     recognition.lang = "en-US";
 
+    recognitionRef.current = recognition;
+    const isRecognizingRef = { current: false };
+
+    const safeRecognition = () => {
+      try {
+        if (!isSpeakingRef.current && !isRecognizingRef.current) {
+          recognition.start();
+        }
+      } catch (error) {
+        console.error("Error during recognition:", error);
+      }
+    };
+
+    recognition.onstart = () => {
+      isRecognizingRef.current = true;
+      setListening(true);
+    };
+    recognition.onend = () => {
+      isRecognizingRef.current = false;
+      setListening(false);
+      if (!isSpeakingRef.current) {
+        setTimeout(() => {
+          safeRecognition();
+        }, 1000);
+      }
+    };
+
+    recognition.onerror = (event) => {
+      isRecognizingRef.current = false;
+      setListening(false);
+      if (event.error === "aborted" && !isSpeakingRef.current) {
+        setTimeout(() => {
+          safeRecognition();
+        }, 1000);
+      }
+    };
+
     recognition.onresult = async (event) => {
       const transcript =
         event.results[event.results.length - 1][0].transcript.trim();
@@ -82,13 +128,29 @@ const Home = () => {
           .toLowerCase()
           .includes(userData?.user?.assistantName.toLowerCase())
       ) {
+        recognition.stop();
+        isRecognizingRef.current = false;
+        setListening(false);
         const data = await getGeminiResponse(transcript);
         console.log("data", data);
         handleCommand(data);
       }
     };
 
-    recognition.start();
+    safeRecognition();
+
+    const fallback = setInterval(() => {
+      if (!isSpeakingRef.current && !isRecognizingRef.current) {
+        safeRecognition();
+      }
+    }, 10000);
+
+    return () => {
+      clearInterval(fallback);
+      recognition.stop();
+      isRecognizingRef.current = false;
+      setListening(false);
+    };
   }, []);
 
   return (
