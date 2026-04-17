@@ -39,50 +39,59 @@ const Home = () => {
     }
   };
 
-  const speak = (text) => {
-    const utterance = new SpeechSynthesisUtterance(text);
-    synth.speak(utterance);
-    isSpeakingRef.current = true;
-    utterance.onend = () => {
-      isSpeakingRef.current = false;
-      startRecognition();
-    };
-  };
-
-  const handleCommand = (data) => {
-    const { type, userInput, response } = data;
-    speak(response);
-    if (type === "google-search") {
-      const query = encodeURIComponent(userInput);
-      window.open(`https://www.google.com/search?q=${query}`, "_blank");
-    }
-    if (type === "calculator-open") {
-      const query = encodeURIComponent(userInput);
-      window.open(
-        `https://www.calculator.net/calculator/calc${query}`,
-        "_blank",
-      );
-    }
-    if (type === "instagram-open") {
-      window.open(`https://www.instagram.com/`, "_blank");
-    }
-    if (type === "facebook-open") {
-      window.open(`https://www.facebook.com/`, "_blank");
-    }
-    if (type === "weather-show") {
-      const query = encodeURIComponent(userInput);
-      window.open(`https://www.google.com/search?q=weather+${query}`, "_blank");
-    }
-    if (type === "youtube-search" || type === "youtube-play") {
-      const query = encodeURIComponent(userInput);
-      window.open(
-        `https://www.youtube.com/results?search_query=${query}`,
-        "_blank",
-      );
-    }
-  };
-
   useEffect(() => {
+    const speak = (text) => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      const voices = window.speechSynthesis.getVoices();
+      const englishVoice = voices.find((voice) => voice.lang.includes("en"));
+      if (englishVoice) {
+        utterance.voice = englishVoice;
+      }
+      synth.speak(utterance);
+      isSpeakingRef.current = true;
+      utterance.onend = () => {
+        isSpeakingRef.current = false;
+        startRecognition();
+      };
+    };
+
+    const handleCommand = (data) => {
+      const { type, userInput, response } = data;
+      speak(response);
+      if (type === "google-search") {
+        const query = encodeURIComponent(userInput);
+        window.open(`https://www.google.com/search?q=${query}`, "_blank");
+      }
+      if (type === "calculator-open") {
+        const query = encodeURIComponent(userInput);
+        window.open(
+          `https://www.calculator.net/calculator/calc${query}`,
+          "_blank",
+        );
+      }
+      if (type === "instagram-open") {
+        window.open(`https://www.instagram.com/`, "_blank");
+      }
+      if (type === "facebook-open") {
+        window.open(`https://www.facebook.com/`, "_blank");
+      }
+      if (type === "weather-show") {
+        const query = encodeURIComponent(userInput);
+        window.open(
+          `https://www.google.com/search?q=weather+${query}`,
+          "_blank",
+        );
+      }
+      if (type === "youtube-search" || type === "youtube-play") {
+        const query = encodeURIComponent(userInput);
+        window.open(
+          `https://www.youtube.com/results?search_query=${query}`,
+          "_blank",
+        );
+      }
+    };
+
     const speechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -142,7 +151,9 @@ const Home = () => {
         setListening(false);
         const data = await getGeminiResponse(transcript);
         console.log("data", data);
-        handleCommand(data);
+        if (data && data.response) {
+          handleCommand(data);
+        }
       }
     };
 
@@ -160,7 +171,7 @@ const Home = () => {
       isRecognizingRef.current = false;
       setListening(false);
     };
-  }, []);
+  }, [userData?.user?.assistantName, getGeminiResponse, setListening, synth]);
 
   return (
     <div className="w-full h-screen bg-linear-to-t from-black to-[#02023d] flex justify-center items-center flex-col gap-4 ">
