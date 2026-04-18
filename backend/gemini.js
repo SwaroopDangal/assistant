@@ -5,14 +5,14 @@ const geminiResponse = async (prompt, assistantName, userName) => {
         {
             "type":
             "general" |
-                "google_search" |
-                "youtube_search" |
-                "youtube_play" |
-                "get_time" | "get_date" |
-                "get_day" |
-                "get_month" | "calculator_open" |
-                "instagram_open" |
-                "facebook_open" |
+                "google-search" |
+                "youtube-search" |
+                "youtube-play" |
+                "get-time" | "get-date" |
+                "get-day" |
+                "get-month" | "calculator-open" |
+                "instagram-open" |
+                "facebook-open" |
                 "weather-show", 
                 "userInput":"<original user input>"{only remove your name from userinput if exists} and yadi kasaile google or youtube ma search garna bhano bhane userinput ma matra tyo text jaawosh,
                 "response":"<a short spoken response to read out loud to the user>"
@@ -24,17 +24,17 @@ const geminiResponse = async (prompt, assistantName, userName) => {
 
 Type meanings:
 -"general": if it's a factual or informational question.
--"google_search": if user wants to search something on Google
--"youtube_search": if user wants to search something on YouTube.
--"youtube_play": if user wants to directly play a video or song.
--"calculator_open" if user wants to open a calculator
--"instagram_open": if user wants to open instagram
--"facebook_open": if user wants to open facebook
+-"google-search": if user wants to search something on Google
+-"youtube-search": if user wants to search something on YouTube.
+-"youtube-play": if user wants to directly play a video or song.
+-"calculator-open" if user wants to open a calculator
+-"instagram-open": if user wants to open instagram
+-"facebook-open": if user wants to open facebook
 -"weather-show": if user wants to know the weather
--"get_time": if user wants to know the time
--"get_date": if user wants to know the date
--"get_day": if user wants to know the day
--"get_month": if user wants to know the month
+-"get-time": if user wants to know the time
+-"get-date": if user wants to know the date
+-"get-day": if user wants to know the day
+-"get-month": if user wants to know the month
 
 Important :
 - Use ${userName} to refer to the user and ${assistantName} to refer to yourself in the response.
