@@ -46,6 +46,7 @@ export const askToAssistant = async (req, res) => {
     try {
         const { command } = req.body;
         const user = await User.findById(req.userId).select("-password");
+       
         const { name, assistantName, assistantImage } = user;
         const result = await geminiResponse(command, assistantName, name);
 
@@ -64,13 +65,13 @@ export const askToAssistant = async (req, res) => {
                 return res.status(200).json({ type, userInput: gemResult.userInput, response: `Today is ${moment().format('dddd')}` });
             case 'get-month':
                 return res.status(200).json({ type, userInput: gemResult.userInput, response: `Today is ${moment().format('MMMM')}` });
-            case 'google_search':
-            case 'youtube_search':
-            case 'youtube_play':
+            case 'google-search':
+            case 'youtube-search':
+            case 'youtube-play':
             case 'general':
-            case "calculator_open":
-            case "instagram_open":
-            case "facebook_open":
+            case "calculator-open":
+            case "instagram-open":
+            case "facebook-open":
             case "weather-show":
                 return res.status(200).json({ type, userInput: gemResult.userInput, response: gemResult.response });
 
