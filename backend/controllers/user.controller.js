@@ -46,7 +46,8 @@ export const askToAssistant = async (req, res) => {
     try {
         const { command } = req.body;
         const user = await User.findById(req.userId).select("-password");
-       
+        user.history.push(command)
+        user.save()
         const { name, assistantName, assistantImage } = user;
         const result = await geminiResponse(command, assistantName, name);
 
