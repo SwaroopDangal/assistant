@@ -1,11 +1,14 @@
 import React, { useContext, useEffect } from "react";
 import { userDataContext } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
-
+import ai from "../assets/ai.gif";
+import userImg from "../assets/user.gif";
 const Home = () => {
   const navigate = useNavigate();
   const { userData, serverUrl, setUserData, getGeminiResponse } =
     useContext(userDataContext);
+  const [userText, setUserText] = React.useState("");
+  const [aiText, setAiText] = React.useState("");
 
   const [listening, setListening] = React.useState(false);
   const isSpeakingRef = React.useRef(false);
@@ -146,10 +149,14 @@ const Home = () => {
           .toLowerCase()
           .includes(userData?.user?.assistantName.toLowerCase())
       ) {
+        setAiText("");
+        setUserText(transcript);
         recognition.stop();
         isRecognizingRef.current = false;
         setListening(false);
         const data = await getGeminiResponse(transcript);
+        setUserText("");
+        setAiText(data.response);
         console.log("data", data);
         if (data && data.response) {
           handleCommand(data);
@@ -201,6 +208,12 @@ const Home = () => {
       <h1 className="text-white text-[18px] font-semibold ">
         I'm {userData?.user?.assistantName}
       </h1>
+      {!aiText && (
+        <img src={userImg} alt="User" className="object-cover h-50 w-100" />
+      )}
+      {aiText && (
+        <img src={ai} alt="AI" className="h-full object-cover w-100 h-50" />
+      )}
     </div>
   );
 };
